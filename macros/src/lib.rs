@@ -5,7 +5,7 @@ use quote::{quote, ToTokens};
 /// export the function as an command to be run by `run_cmd!` or `run_fun!`
 ///
 /// ```
-/// # use cmd_lib::*;
+/// # use cmd_lib_cf::*;
 /// # use std::io::Write;
 /// #[export_cmd(my_cmd)]
 /// fn foo(env: &mut CmdEnv) -> CmdResult {
@@ -43,7 +43,7 @@ pub fn export_cmd(
 
 /// import user registered custom command
 /// ```
-/// # use cmd_lib::*;
+/// # use cmd_lib_cf::*;
 /// #[export_cmd(my_cmd)]
 /// fn foo(env: &mut CmdEnv) -> CmdResult {
 ///     let msg = format!("msg from foo(), args: {:?}\n", env.args());
@@ -82,7 +82,7 @@ pub fn use_custom_cmd(item: proc_macro::TokenStream) -> proc_macro::TokenStream 
 
 /// import library predefined builtin command
 /// ```
-/// # use cmd_lib::*;
+/// # use cmd_lib_cf::*;
 /// use_builtin_cmd!(info); // import only one builtin command
 /// use_builtin_cmd!(echo, info, warn, err, die, cat); // import all the builtins
 /// ```
@@ -100,7 +100,7 @@ pub fn use_builtin_cmd(item: proc_macro::TokenStream) -> proc_macro::TokenStream
         } else if let TokenTree::Ident(cmd) = t {
             let cmd_name = cmd.to_string();
             let cmd_fn = syn::Ident::new(&format!("builtin_{}", cmd_name), Span::call_site());
-            ret.extend(quote!(::cmd_lib::export_cmd(#cmd_name, ::cmd_lib::#cmd_fn);));
+            ret.extend(quote!(::cmd_lib_cf::export_cmd(#cmd_name, ::cmd_lib_cf::#cmd_fn);));
         } else {
             abort!(t, "expect a list of comma separated commands");
         }
@@ -111,7 +111,7 @@ pub fn use_builtin_cmd(item: proc_macro::TokenStream) -> proc_macro::TokenStream
 
 /// Run commands, returning result handle to check status
 /// ```
-/// # use cmd_lib::run_cmd;
+/// # use cmd_lib_cf::run_cmd;
 /// let msg = "I love rust";
 /// run_cmd!(echo $msg)?;
 /// run_cmd!(echo "This is the message: $msg")?;
@@ -140,7 +140,7 @@ pub fn use_builtin_cmd(item: proc_macro::TokenStream) -> proc_macro::TokenStream
 pub fn run_cmd(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let cmds = lexer::Lexer::new(input.into()).scan().parse(false);
     quote! ({
-        use ::cmd_lib::AsOsStr;
+        use ::cmd_lib_cf::AsOsStr;
         #cmds.run_cmd()
     })
     .into()
@@ -148,7 +148,7 @@ pub fn run_cmd(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
 
 /// Run commands, returning result handle to capture output and to check status
 /// ```
-/// # use cmd_lib::run_fun;
+/// # use cmd_lib_cf::run_fun;
 /// let version = run_fun!(rustc --version)?;
 /// println!("Your rust version is {}", version);
 ///
@@ -162,7 +162,7 @@ pub fn run_cmd(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
 pub fn run_fun(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let cmds = lexer::Lexer::new(input.into()).scan().parse(false);
     quote! ({
-        use ::cmd_lib::AsOsStr;
+        use ::cmd_lib_cf::AsOsStr;
         #cmds.run_fun()
     })
     .into()
@@ -171,7 +171,7 @@ pub fn run_fun(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
 /// Run commands with/without pipes as a child process, returning a handle to check the final
 /// result
 /// ```
-/// # use cmd_lib::*;
+/// # use cmd_lib_cf::*;
 ///
 /// let handle = spawn!(ping -c 10 192.168.0.1)?;
 /// // ...
@@ -184,7 +184,7 @@ pub fn run_fun(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
 pub fn spawn(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let cmds = lexer::Lexer::new(input.into()).scan().parse(true);
     quote! ({
-        use ::cmd_lib::AsOsStr;
+        use ::cmd_lib_cf::AsOsStr;
         #cmds.spawn(false)
     })
     .into()
@@ -193,7 +193,7 @@ pub fn spawn(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
 /// Run commands with/without pipes as a child process, returning a handle to capture the
 /// final output
 /// ```
-/// # use cmd_lib::*;
+/// # use cmd_lib_cf::*;
 /// let mut procs = vec![];
 /// for _ in 0..4 {
 ///     let proc = spawn_with_output!(
@@ -214,7 +214,7 @@ pub fn spawn(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
 pub fn spawn_with_output(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let cmds = lexer::Lexer::new(input.into()).scan().parse(true);
     quote! ({
-        use ::cmd_lib::AsOsStr;
+        use ::cmd_lib_cf::AsOsStr;
         #cmds.spawn_with_output()
     })
     .into()
@@ -226,8 +226,8 @@ pub fn spawn_with_output(input: proc_macro::TokenStream) -> proc_macro::TokenStr
 pub fn cmd_error(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let msg = parse_msg(input.into());
     quote!({
-        use ::cmd_lib::AsOsStr;
-        ::cmd_lib::log::error!("{}", #msg)
+        use ::cmd_lib_cf::AsOsStr;
+        ::cmd_lib_cf::log::error!("{}", #msg)
     })
     .into()
 }
@@ -238,8 +238,8 @@ pub fn cmd_error(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
 pub fn cmd_warn(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let msg = parse_msg(input.into());
     quote!({
-        use ::cmd_lib::AsOsStr;
-        ::cmd_lib::log::warn!("{}", #msg)
+        use ::cmd_lib_cf::AsOsStr;
+        ::cmd_lib_cf::log::warn!("{}", #msg)
     })
     .into()
 }
@@ -250,7 +250,7 @@ pub fn cmd_warn(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
 pub fn cmd_echo(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let msg = parse_msg(input.into());
     quote!({
-        use ::cmd_lib::AsOsStr;
+        use ::cmd_lib_cf::AsOsStr;
         println!("{}", #msg)
     })
     .into()
@@ -260,7 +260,7 @@ pub fn cmd_echo(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
 ///
 /// e.g:
 /// ```
-/// use cmd_lib::cmd_info;
+/// use cmd_lib_cf::cmd_info;
 /// let name = "rust";
 /// cmd_info!("hello, $name");
 ///
@@ -271,8 +271,8 @@ pub fn cmd_echo(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
 pub fn cmd_info(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let msg = parse_msg(input.into());
     quote!({
-        use ::cmd_lib::AsOsStr;
-        ::cmd_lib::log::info!("{}", #msg)
+        use ::cmd_lib_cf::AsOsStr;
+        ::cmd_lib_cf::log::info!("{}", #msg)
     })
     .into()
 }
@@ -283,8 +283,8 @@ pub fn cmd_info(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
 pub fn cmd_debug(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let msg = parse_msg(input.into());
     quote!({
-        use ::cmd_lib::AsOsStr;
-        ::cmd_lib::log::debug!("{}", #msg)
+        use ::cmd_lib_cf::AsOsStr;
+        ::cmd_lib_cf::log::debug!("{}", #msg)
     })
     .into()
 }
@@ -295,8 +295,8 @@ pub fn cmd_debug(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
 pub fn cmd_trace(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let msg = parse_msg(input.into());
     quote!({
-        use ::cmd_lib::AsOsStr;
-        ::cmd_lib::log::trace!("{}", #msg)
+        use ::cmd_lib_cf::AsOsStr;
+        ::cmd_lib_cf::log::trace!("{}", #msg)
     })
     .into()
 }
@@ -307,7 +307,7 @@ pub fn cmd_trace(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
 ///
 /// e.g:
 /// ```
-/// # use cmd_lib::cmd_die;
+/// # use cmd_lib_cf::cmd_die;
 /// let file = "bad_file";
 /// cmd_die!("could not open file: $file");
 /// // output:
@@ -320,8 +320,8 @@ pub fn cmd_trace(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
 pub fn cmd_die(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let msg = parse_msg(input.into());
     quote!({
-        use ::cmd_lib::AsOsStr;
-        ::cmd_lib::log::error!("FATAL: {}", #msg);
+        use ::cmd_lib_cf::AsOsStr;
+        ::cmd_lib_cf::log::error!("FATAL: {}", #msg);
         std::process::exit(1)
     })
     .into()

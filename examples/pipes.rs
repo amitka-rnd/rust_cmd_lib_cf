@@ -1,6 +1,6 @@
 #![allow(non_upper_case_globals)]
 #![allow(non_snake_case)]
-use cmd_lib::*;
+use cmd_lib_cf::*;
 use std::io::Read;
 use std::{thread, time};
 

@@ -1,4 +1,4 @@
-use cmd_lib::*;
+use cmd_lib_cf::*;
 
 #[test]
 #[rustfmt::skip]

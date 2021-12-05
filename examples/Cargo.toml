@@ -5,7 +5,7 @@ publish = false
 edition = "2018"
 
 [dev-dependencies]
-cmd_lib = { path = ".." }
+cmd_lib_cf = { path = ".." }
 rayon = "1.5"
 structopt = "0.3"
 byte-unit = "4.0"

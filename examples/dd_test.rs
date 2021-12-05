@@ -14,7 +14,7 @@
 // INFO - thread 0 bandwidth: 265 MB/s
 // INFO - Total bandwidth: 1.01 GiB/s
 use byte_unit::Byte;
-use cmd_lib::*;
+use cmd_lib_cf::*;
 use rayon::prelude::*;
 use std::time::Instant;
 use structopt::StructOpt;

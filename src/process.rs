@@ -352,6 +352,11 @@ impl Cmd {
             .collect();
         if !self.in_cmd_map {
             let mut cmd = Command::new(&args[0]);
+            #[cfg(target_os = "windows")] {
+                use std::os::windows::process::CommandExt;
+                cmd.creation_flags(0x08000000);
+            }
+
             cmd.args(&args[1..]);
             for (k, v) in self.vars.iter() {
                 cmd.env(k, v);
@@ -447,6 +452,7 @@ impl Cmd {
 
             // spawning process
             let child = cmd.spawn()?;
+
             Ok(CmdChild::new(
                 CmdChildHandle::Proc(child),
                 self.cmd_str(),

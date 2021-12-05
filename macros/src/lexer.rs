@@ -14,12 +14,12 @@ use std::iter::Peekable;
 pub fn scan_str_lit(lit: &Literal) -> TokenStream {
     let s = lit.to_string();
     if !s.starts_with('\"') {
-        return quote!(::cmd_lib::CmdString::from(#lit));
+        return quote!(::cmd_lib_cf::CmdString::from(#lit));
     }
     let mut iter = s[1..s.len() - 1] // To trim outside ""
         .chars()
         .peekable();
-    let mut output = quote!(::cmd_lib::CmdString::default());
+    let mut output = quote!(::cmd_lib_cf::CmdString::default());
     let mut last_part = OsString::new();
     fn seal_last_part(last_part: &mut OsString, output: &mut TokenStream) {
         if !last_part.is_empty() {
@@ -194,7 +194,7 @@ impl Lexer {
 
     fn extend_last_arg(&mut self, stream: TokenStream) {
         if self.last_arg_str.is_empty() {
-            self.last_arg_str = quote!(::cmd_lib::CmdString::default());
+            self.last_arg_str = quote!(::cmd_lib_cf::CmdString::default());
         }
         self.last_arg_str.extend(quote!(.append(#stream)));
     }

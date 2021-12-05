@@ -2,7 +2,7 @@ use log::{Level, LevelFilter, Metadata, Record};
 
 static LOGGER: CmdLogger = CmdLogger;
 
-/// Initializes the builtin cmd_lib logger
+/// Initializes the builtin cmd_lib_cf logger
 ///
 /// This is to make examples in this library work, and users should usually use a real logger
 /// instead. When being used, it should be called early in the main() function. Default log level

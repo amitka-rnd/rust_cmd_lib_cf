@@ -1,22 +1,22 @@
 [package]
-name = "cmd_lib"
-description = "Common rust commandline macros and utils, to write shell script like tasks easily"
+name = "cmd_lib_cf"
+description = "Modified version of cmd_lib with CREATE_NO_WINDOW built in"
 license = "MIT OR Apache-2.0"
-homepage = "https://github.com/rust-shell-script/rust_cmd_lib"
-repository = "https://github.com/rust-shell-script/rust_cmd_lib"
-documentation = "https://docs.rs/cmd_lib"
+homepage = "https://github.com/amitka-rnd/rust_cmd_lib_cf"
+repository = "https://github.com/amitka-rnd/rust_cmd_lib_cf"
+documentation = "https://docs.rs/cmd_lib_cf"
 keywords = ["shell", "script", "cli", "process", "pipe"]
 categories = ["command-line-interface", "command-line-utilities"]
 readme = "README.md"
-version = "1.3.0"
-authors = ["rust-shell-script <rust-shell-script@gmail.com>"]
+version = "1.3.4"
+authors = ["Amit Katz <callcraft456@gmail.com>"]
 edition = "2018"
 
 [workspace]
 members = ["macros", "examples"]
 
 [dependencies]
-cmd_lib_macros = { version = "1.3.0", path = "./macros" }
+cmd_lib_cf_macros = { version = "1.3.1", path = "./macros" }
 lazy_static = "1.4.0"
 log = "0.4"
 faccess = "0.2"

@@ -22,7 +22,7 @@ impl<I: Iterator<Item = ParseArg>> Parser<I> {
     }
 
     pub fn parse(mut self, for_spawn: bool) -> TokenStream {
-        let mut ret = quote!(::cmd_lib::GroupCmds::default());
+        let mut ret = quote!(::cmd_lib_cf::GroupCmds::default());
         while self.iter.peek().is_some() {
             let cmd = self.parse_cmd();
             if !cmd.is_empty() {
@@ -37,7 +37,7 @@ impl<I: Iterator<Item = ParseArg>> Parser<I> {
     }
 
     fn parse_cmd(&mut self) -> TokenStream {
-        let mut cmds = quote!(::cmd_lib::Cmds::default());
+        let mut cmds = quote!(::cmd_lib_cf::Cmds::default());
         while self.iter.peek().is_some() {
             let cmd = self.parse_pipe();
             cmds.extend(quote!(.pipe(#cmd)));
@@ -51,12 +51,12 @@ impl<I: Iterator<Item = ParseArg>> Parser<I> {
     }
 
     fn parse_pipe(&mut self) -> TokenStream {
-        let mut ret = quote!(::cmd_lib::Cmd::default());
+        let mut ret = quote!(::cmd_lib_cf::Cmd::default());
         while let Some(arg) = self.iter.peek() {
             match arg {
                 ParseArg::RedirectFd(fd1, fd2) => {
                     if fd1 != fd2 {
-                        let mut redirect = quote!(::cmd_lib::Redirect);
+                        let mut redirect = quote!(::cmd_lib_cf::Redirect);
                         match (fd1, fd2) {
                             (1, 2) => redirect.extend(quote!(::StdoutToStderr)),
                             (2, 1) => redirect.extend(quote!(::StderrToStdout)),
@@ -66,7 +66,7 @@ impl<I: Iterator<Item = ParseArg>> Parser<I> {
                     }
                 }
                 ParseArg::RedirectFile(fd1, file, append) => {
-                    let mut redirect = quote!(::cmd_lib::Redirect);
+                    let mut redirect = quote!(::cmd_lib_cf::Redirect);
                     match fd1 {
                         0 => redirect.extend(quote!(::FileToStdin(#file.into_path_buf()))),
                         1 => {

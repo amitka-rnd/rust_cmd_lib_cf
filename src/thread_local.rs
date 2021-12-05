@@ -1,6 +1,6 @@
 /// Declare a new thread local storage variable
 /// ```
-/// # use cmd_lib::*;
+/// # use cmd_lib_cf::*;
 /// use std::collections::HashMap;
 /// tls_init!(LEN, u32, 100);
 /// tls_init!(MAP, HashMap<String, String>, HashMap::new());
@@ -18,7 +18,7 @@ macro_rules! tls_init {
 /// Get the value of a thread local storage variable
 ///
 /// ```
-/// # use cmd_lib::*;
+/// # use cmd_lib_cf::*;
 /// // from examples/tetris.rs:
 /// tls_init!(screen_buffer, String, "".to_string());
 /// eprint!("{}", tls_get!(screen_buffer));
@@ -37,7 +37,7 @@ macro_rules! tls_get {
 
 /// Set the value of a thread local storage variable
 /// ```
-/// # use cmd_lib::*;
+/// # use cmd_lib_cf::*;
 /// # let changes = "";
 /// tls_init!(screen_buffer, String, "".to_string());
 /// tls_set!(screen_buffer, |s| s.push_str(changes));

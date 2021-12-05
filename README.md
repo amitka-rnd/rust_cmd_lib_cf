@@ -1,12 +1,12 @@
-# cmd_lib
+# cmd_lib_cf
 
 ## Rust command-line library
 
 Common rust command-line macros and utilities, to write shell-script like tasks
-easily in rust programming language. Available at [crates.io](https://crates.io/crates/cmd_lib).
+easily in rust programming language. Available at [crates.io](https://crates.io/crates/cmd_lib_cf).
 
 [![Build status](https://github.com/rust-shell-script/rust_cmd_lib/workflows/ci/badge.svg)](https://github.com/rust-shell-script/rust_cmd_lib/actions)
-[![Crates.io](https://img.shields.io/crates/v/cmd_lib.svg)](https://crates.io/crates/cmd_lib)
+[![Crates.io](https://img.shields.io/crates/v/cmd_lib_cf.svg)](https://crates.io/crates/cmd_lib_cf)
 
 ### Why you need this
 If you need to run some external commands in rust, the
@@ -25,7 +25,7 @@ A lot of developers just choose shell(sh, bash, ...) scripts for such tasks, by 
 You can find all kinds of pitfalls and mysterious tricks to make other parts of shell script work. As the shell
 scripts grow, they will ultimately be unmaintainable and no one wants to touch them any more.
 
-This cmd_lib library is trying to provide the redirection and piping capabilities, and other facilities to make writing
+This cmd_lib_cf library is trying to provide the redirection and piping capabilities, and other facilities to make writing
 shell-script like tasks easily **without launching any shell**. For the
 [rust cookbook examples](https://rust-lang-nursery.github.io/rust-cookbook/os/external.html),
 they can usually be implemented as one line of rust macro with the help of this library, as in the

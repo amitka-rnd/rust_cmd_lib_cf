@@ -1,5 +1,5 @@
 #![allow(non_upper_case_globals)]
-use cmd_lib::*;
+use cmd_lib_cf::*;
 use std::io::Read;
 use std::{thread, time};
 

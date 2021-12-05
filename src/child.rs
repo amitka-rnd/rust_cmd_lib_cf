@@ -179,6 +179,7 @@ impl CmdChild {
                 vec![]
             }
         };
+
         let res = self.handle.wait_with_stderr(self.stderr, &self.cmd);
         if let Err(e) = res {
             if !ignore_error {
@@ -197,7 +198,7 @@ pub(crate) enum CmdChildHandle {
 
 impl CmdChildHandle {
     fn wait_with_stderr(self, stderr: Option<PipeReader>, cmd: &str) -> CmdResult {
-        let polling_stderr = StderrLogging::new(cmd, stderr);
+        let (message, polling_stderr) = StderrLogging::new(cmd, stderr);
         match self {
             CmdChildHandle::Proc(mut proc) => {
                 let status = proc.wait();
@@ -207,7 +208,7 @@ impl CmdChildHandle {
                         if !status.success() {
                             return Err(Self::status_to_io_error(
                                 status,
-                                &format!("Running {} exited with error", cmd),
+                                &format!("Running {} exited with error", message.unwrap()),
                             ));
                         }
                     }
@@ -268,23 +269,28 @@ struct StderrLogging {
 }
 
 impl StderrLogging {
-    fn new(cmd: &str, stderr: Option<PipeReader>) -> Self {
-        if let Some(stderr) = stderr {
+    fn new(cmd: &str, stderr: Option<PipeReader>) -> (Option<String>, Self) {
+        if let Some(mut stderr) = stderr {
+            let mut bufa = vec![];
+            stderr.read_to_end(&mut bufa).unwrap_or(0);
+            // println!("{:?}", String::from_utf8(bufa).unwrap());
+
             let thread = std::thread::spawn(move || {
                 BufReader::new(stderr)
                     .lines()
                     .filter_map(|line| line.ok())
                     .for_each(|line| info!("{}", line))
             });
-            Self {
+
+            (Some(String::from_utf8(bufa).unwrap()), Self {
                 cmd: cmd.into(),
-                thread: Some(thread),
-            }
+                thread: Some(thread)
+            })
         } else {
-            Self {
+            (None, Self {
                 cmd: cmd.into(),
-                thread: None,
-            }
+                thread: None
+            })
         }
     }
 }

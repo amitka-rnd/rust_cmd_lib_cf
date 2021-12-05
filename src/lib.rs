@@ -1,10 +1,10 @@
 //! # Rust command-line library
 //!
 //! Common rust command-line macros and utilities, to write shell-script like tasks
-//! easily in rust programming language. Available at [crates.io](https://crates.io/crates/cmd_lib).
+//! easily in rust programming language. Available at [crates.io](https://crates.io/crates/cmd_lib_cf).
 //!
 //! [![Build status](https://github.com/rust-shell-script/rust_cmd_lib/workflows/ci/badge.svg)](https://github.com/rust-shell-script/rust_cmd_lib/actions)
-//! [![Crates.io](https://img.shields.io/crates/v/cmd_lib.svg)](https://crates.io/crates/cmd_lib)
+//! [![Crates.io](https://img.shields.io/crates/v/cmd_lib_cf.svg)](https://crates.io/crates/cmd_lib_cf)
 //!
 //! ## Why you need this
 //! If you need to run some external commands in rust, the
@@ -23,7 +23,7 @@
 //! You can find all kinds of pitfalls and mysterious tricks to make other parts of shell script work. As the shell
 //! scripts grow, they will ultimately be unmaintainable and no one wants to touch them any more.
 //!
-//! This cmd_lib library is trying to provide the redirection and piping capabilities, and other facilities to make writing
+//! This cmd_lib_cf library is trying to provide the redirection and piping capabilities, and other facilities to make writing
 //! shell-script like tasks easily **without launching any shell**. For the
 //! [rust cookbook examples](https://rust-lang-nursery.github.io/rust-cookbook/os/external.html),
 //! they can usually be implemented as one line of rust macro with the help of this library, as in the
@@ -37,7 +37,7 @@
 //!
 //! ```no_run
 //! # use byte_unit::Byte;
-//! # use cmd_lib::*;
+//! # use cmd_lib_cf::*;
 //! # use rayon::prelude::*;
 //! # use std::time::Instant;
 //! # const DATA_SIZE: u64 = 10 * 1024 * 1024 * 1024; // 10GB data
@@ -88,7 +88,7 @@
 //! - run_cmd! --> CmdResult
 //!
 //! ```no_run
-//! # use cmd_lib::run_cmd;
+//! # use cmd_lib_cf::run_cmd;
 //! let msg = "I love rust";
 //! run_cmd!(echo $msg)?;
 //! run_cmd!(echo "This is the message: $msg")?;
@@ -117,7 +117,7 @@
 //! - run_fun! --> FunResult
 //!
 //! ```
-//! # use cmd_lib::run_fun;
+//! # use cmd_lib_cf::run_fun;
 //! let version = run_fun!(rustc --version)?;
 //! eprintln!("Your rust version is {}", version);
 //!
@@ -144,7 +144,7 @@
 //! like `$a` or `${a}` in `run_cmd!` or `run_fun!` macros.
 //!
 //! ```no_run
-//! # use cmd_lib::run_cmd;
+//! # use cmd_lib_cf::run_cmd;
 //! let dir = "my folder";
 //! run_cmd!(echo "Creating $dir at /tmp")?;
 //! run_cmd!(mkdir -p /tmp/$dir)?;
@@ -160,7 +160,7 @@
 //! there will be no string interpolation, the same as in idiomatic rust. However, you can always use `format!` macro
 //! to form the new string. For example:
 //! ```no_run
-//! # use cmd_lib::run_cmd;
+//! # use cmd_lib_cf::run_cmd;
 //! // string interpolation
 //! let key_word = "time";
 //! let awk_opts = format!(r#"/{}/ {{print $(NF-3) " " $(NF-1) " " $NF}}"#, key_word);
@@ -171,7 +171,7 @@
 //!
 //! If you want to use dynamic parameters, you can use `$[]` to access vector variable:
 //! ```no_run
-//! # use cmd_lib::run_cmd;
+//! # use cmd_lib_cf::run_cmd;
 //! let gopts = vec![vec!["-l", "-a", "/"], vec!["-a", "/var"]];
 //! for opts in gopts {
 //!     run_cmd!(ls $[opts])?;
@@ -190,7 +190,7 @@
 //! errors if command execution fails.
 //!
 //! ```no_run
-//! # use cmd_lib::*;
+//! # use cmd_lib_cf::*;
 //! // this code snppit is using a builtin simple logger, you can replace it with a real logger
 //! init_builtin_logger();
 //! let dir: &str = "folder with spaces";
@@ -207,7 +207,7 @@
 //! #### cd
 //! cd: set process current directory, which can be used without importing.
 //! ```no_run
-//! # use cmd_lib::run_cmd;
+//! # use cmd_lib_cf::run_cmd;
 //! run_cmd! (
 //!     cd /tmp;
 //!     ls | wc -l;
@@ -230,7 +230,7 @@
 //! Print messages to stdout, which needs to be imported with `use_builtin_cmd!` macro.
 //!
 //! ```
-//! # use cmd_lib::{run_cmd, use_builtin_cmd};
+//! # use cmd_lib_cf::{run_cmd, use_builtin_cmd};
 //! use_builtin_cmd!(echo, warn); // find more builtin commands in src/builtins.rs
 //! run_cmd!(echo "This is from builtin command!")?;
 //! run_cmd!(warn "This is from builtin command!")?;
@@ -241,7 +241,7 @@
 //! Declare your function with `#[export_cmd(..)]` attribute, and import it with `use_custom_cmd!` macro:
 //!
 //! ```
-//! # use cmd_lib::*;
+//! # use cmd_lib_cf::*;
 //! # use std::io::Write;
 //! #[export_cmd(my_cmd)]
 //! fn foo(env: &mut CmdEnv) -> CmdResult {
@@ -267,7 +267,7 @@
 //! processing with `wait_with_pipe()`.
 //!
 //! ```no_run
-//! # use cmd_lib::*;
+//! # use cmd_lib_cf::*;
 //! # use std::io::{BufRead, BufReader};
 //! let mut proc = spawn!(ping -c 10 192.168.0.1)?;
 //! // do other stuff
@@ -296,7 +296,7 @@
 //! - `tls_get!` to get the value
 //! - `tls_set!` to set the value
 //! ```
-//! # use cmd_lib::{ tls_init, tls_get, tls_set };
+//! # use cmd_lib_cf::{ tls_init, tls_get, tls_set };
 //! tls_init!(DELAY, f64, 1.0);
 //! const DELAY_FACTOR: f64 = 0.8;
 //! tls_set!(DELAY, |d| *d *= DELAY_FACTOR);
@@ -318,7 +318,7 @@
 //! To set environment variables for the command only, you can put the assignments before the command.
 //! Like this:
 //! ```no_run
-//! # use cmd_lib::run_cmd;
+//! # use cmd_lib_cf::run_cmd;
 //! run_cmd!(FOO=100 /tmp/test_run_cmd_lib.sh)?;
 //! # Ok::<(), std::io::Error>(())
 //! ```
@@ -327,7 +327,7 @@
 //! Using macros can actually avoid command injection, since we do parsing before variable substitution.
 //! For example, below code is fine even without any quotes:
 //! ```
-//! # use cmd_lib::{run_cmd, CmdResult};
+//! # use cmd_lib_cf::{run_cmd, CmdResult};
 //! # use std::path::Path;
 //! fn cleanup_uploaded_file(file: &Path) -> CmdResult {
 //!     run_cmd!(/bin/rm -f /var/upload/$file)
@@ -347,7 +347,7 @@
 //! `tls_init/tls_get/tls_set` macros, and you should only use them for *thread local* variables.
 //!
 
-pub use cmd_lib_macros::{
+pub use cmd_lib_cf_macros::{
     cmd_debug, cmd_die, cmd_echo, cmd_error, cmd_info, cmd_trace, cmd_warn, export_cmd, run_cmd,
     run_fun, spawn, spawn_with_output, use_builtin_cmd, use_custom_cmd,
 };

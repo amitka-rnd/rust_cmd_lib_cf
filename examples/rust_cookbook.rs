@@ -2,11 +2,11 @@
 // Rewrite examples with rust_cmd_lib from
 // https://rust-lang-nursery.github.io/rust-cookbook/os/external.html
 //
-use cmd_lib::*;
+use cmd_lib_cf::*;
 use std::io::{BufRead, BufReader};
 fn main() -> CmdResult {
     init_builtin_logger();
-    cmd_lib::set_pipefail(false); // do not fail due to pipe errors
+    cmd_lib_cf::set_pipefail(false); // do not fail due to pipe errors
 
     // Run an external command and process stdout
     run_cmd!(git log --oneline | head -5)?;
